@@ -1,0 +1,45 @@
+export const products = [
+    {
+        id: 1,
+        name: "Camiseta Oversize Negra",
+        category: "Camisetas",
+        price: 59.90,
+        stock: 10,
+    },
+    {
+        id: 2,
+        name: "Hoodie Urban Gris",
+        category: "Poleras",
+        price: 119.90,
+        stock: 5,
+    },
+    {
+        id: 3,
+        name: "Jean Baggy Azul",
+        category: "Pantalones",
+        price: 99.90,
+        stock: 0,
+    },
+    {
+    id: 4,
+    name: "Camiseta Essential Blanca",
+    category: "Camisetas",
+    price: 39.90,
+    stock: 15,
+  },
+  {
+    id: 5,
+    name: "Hoodie Oversize Negro",
+    category: "Poleras",
+    price: 139.90,
+    stock: 3,
+  },
+  {
+    id: 6,
+    name: "Cargo Pants Beige",
+    category: "Pantalones",
+    price: 109.90,
+    stock: 7,
+  },
+    
+];
