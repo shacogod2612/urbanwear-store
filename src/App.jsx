@@ -10,23 +10,32 @@ function App() {
   const [category, setCategory] = useState("all");
   const [cart, setCart] = useState([]);  
 
-  function addToCart(product) {
-    const existingProduct = cart.find(
+ function addToCart(product) {
+  setCart((currentCart) => {
+    const existingProduct = currentCart.find(
       (item) => item.id === product.id
     );
-    
-    if (existingProduct) {
-      const updateCart = cart.map((item) =>
-        item.id === product.id
-          ? {...item, quantity: item.quantity +1}
-        : item
-      );
 
-      setCart(updateCart);
-    } else {
-      setCart([...cart, {...product, quantity: 1}]);
+    if (existingProduct) {
+      if (existingProduct.quantity >= product.stock) {
+        return currentCart;
+      }
+
+      return currentCart.map((item) =>
+        item.id === product.id
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      );
     }
-  }
+
+    if (product.stock <= 0) {
+      return currentCart;
+    }
+
+    return [...currentCart, { ...product, quantity: 1 }];
+  });
+}
+
 
   function removeFromCart(productId) {
     const updateCart = cart.filter(
@@ -42,19 +51,24 @@ function App() {
   );
 
   function updateQuantity(productId, change) {
-    const updateCart = cart.map((item) => {
-      if (item.id === productId) {
+  setCart((currentCart) =>
+    currentCart
+      .map((item) => {
+        if (item.id !== productId) {
+          return item;
+        }
+
         const newQuantity = item.quantity + change;
+
         if (newQuantity > item.stock) {
           return item;
         }
-          return {...item, quantity: newQuantity,};
-      }
-    })
 
-    .filter((item) => item.quantity > 0);
-    setCart(updateCart);
-  }
+        return { ...item, quantity: newQuantity };
+      })
+      .filter((item) => item.quantity > 0)
+  );
+}
 
   return (
       <main className="store">
