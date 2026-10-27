@@ -1,0 +1,120 @@
+
+/* ========================================
+   URBANWEAR STORE
+   Main / Contenido principal
+======================================== */
+
+/* 1. Contenedor principal */
+
+.store {
+  width: min(1200px, 92%);
+  margin-inline: auto;
+  padding-block: 40px 60px;
+}
+
+/* 2. Encabezado de la tienda */
+
+.store-header {
+  margin-bottom: 40px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.store-header h1 {
+  margin: 0 0 10px;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 900;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+}
+
+.store-header p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 1rem;
+}
+
+/* 3. Sección del catálogo */
+
+.catalog {
+  scroll-margin-top: 100px;
+}
+
+.catalog h2 {
+  margin: 0 0 20px;
+  font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+}
+
+/* 4. Búsqueda y filtros */
+
+.catalog-controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.catalog-controls input,
+.catalog-controls select {
+  min-width: 0;
+  padding: 13px 14px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.catalog-controls input {
+  flex: 1;
+}
+
+.catalog-controls input::placeholder {
+  color: var(--color-muted);
+}
+
+.catalog-controls select {
+  min-width: 190px;
+}
+
+.catalog-controls input:focus-visible,
+.catalog-controls select:focus-visible {
+  border-color: var(--color-accent);
+}
+
+/* 5. Información de resultados */
+
+.catalog > p {
+  margin-block: 16px;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+/* 6. Adaptación para móviles */
+
+@media (max-width: 550px) {
+  .store {
+    padding-top: 24px;
+    padding-bottom: 40px;
+  }
+
+  .store-header {
+    margin-bottom: 28px;
+  }
+
+  .store-header h1 {
+    letter-spacing: -1px;
+  }
+
+  .catalog-controls {
+    flex-direction: column;
+  }
+
+  .catalog-controls select {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalog {
+    scroll-behavior: auto;
+  }
+}

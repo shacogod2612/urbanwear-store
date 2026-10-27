@@ -6,54 +6,72 @@ function Cart({ cart, onRemove, onUpdateQuantity }) {
   );
 
   return (
-    <section className="cart">
-      <h2>Tu carrito</h2>
+    <section className="cart" id="carrito" aria-labelledby="cart-title">
+      <h2 id="cart-title">Tu carrito</h2>
 
       {cart.length === 0 ? (
         <p>Tu carrito está vacío.</p>
       ) : (
         <>
-          {cart.map((product) => (
-            <article key={product.id} className="cart-item">
-              <h3>{product.name}</h3>
+          <div className="cart-items">
+            {cart.map((product) => {
+              const subtotal = product.price * product.quantity;
 
-              <p>Precio: S/ {product.price.toFixed(2)}</p>
+              return (
+                <article key={product.id} className="cart-item">
+                  <h3>{product.name}</h3>
 
-                <div className="cart-quantity">
+                  <p>
+                    Precio por unidad: S/ {product.price.toFixed(2)}
+                  </p>
+
+                  <div className="cart-quantity">
                     <button
-                        type="button"
-                        onClick={() => onUpdateQuantity(product.id, -1)}
-                        arial-label={`Disminuir cantidad de ${product.name}`}
+                      type="button"
+                      onClick={() =>
+                        onUpdateQuantity(product.id, -1)
+                      }
+                      aria-label={`Disminuir cantidad de ${product.name}`}
+                      disabled={product.quantity <= 1}
                     >
-                        -
+                      -
                     </button>
 
-                    <span>{product.quantity}</span>
+                    <span aria-live="polite">
+                      {product.quantity}
+                    </span>
 
                     <button
-                        type="button"
-                        onClick={() => onUpdateQuantity(product.id, 1)}
-                        arial-label={`Aumentar cantidad de ${product.name}`}
+                      type="button"
+                      onClick={() =>
+                        onUpdateQuantity(product.id, 1)
+                      }
+                      aria-label={`Aumentar cantidad de ${product.name}`}
+                      disabled={product.quantity >= product.stock}
                     >
-                        +
+                      +
                     </button>
-                </div>
+                  </div>
 
-              <p>
-                Subtotal: S/{" "}
-                {(product.price * product.quantity).toFixed(2)}
-              </p>
+                  <p>
+                    Subtotal: S/ {subtotal.toFixed(2)}
+                  </p>
 
-                <button
+                  <button
                     type="button"
                     onClick={() => onRemove(product.id)}
-                >
+                    aria-label={`Eliminar ${product.name} del carrito`}
+                  >
                     Eliminar
-                </button>
-            </article>
-          ))}
+                  </button>
+                </article>
+              );
+            })}
+          </div>
 
-          <h3>Total: S/ {total.toFixed(2)}</h3>
+          <p className="cart-total">
+            Total: S/ {total.toFixed(2)}
+          </p>
         </>
       )}
     </section>

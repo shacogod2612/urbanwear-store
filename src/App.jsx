@@ -1,125 +1,144 @@
+
 import { useState } from "react";
-import {products} from './data/products';
-import { filterProducts } from './utils/filterProducts';
-import ProductList  from "./components/ProductList";
+
+import { products } from "./data/products";
+import { filterProducts } from "./utils/filterProducts";
+
+import Header from "./components/Header";
+import ProductList from "./components/ProductList";
 import Cart from "./components/Cart";
-import "./styles/global.css";
+
+import "./styles/App.css";
 
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("all");
-  const [cart, setCart] = useState([]);  
+  const [cart, setCart] = useState([]);
 
- function addToCart(product) {
-  setCart((currentCart) => {
-    const existingProduct = currentCart.find(
-      (item) => item.id === product.id
-    );
+  // Total de unidades del carrito.
+  const cartCount = cart.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
 
-    if (existingProduct) {
-      if (existingProduct.quantity >= product.stock) {
+  // Añadir un producto respetando el stock.
+  function addToCart(product) {
+    setCart((currentCart) => {
+      const existingProduct = currentCart.find(
+        (item) => item.id === product.id
+      );
+
+      if (existingProduct) {
+        if (existingProduct.quantity >= product.stock) {
+          return currentCart;
+        }
+
+        return currentCart.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+
+      if (product.stock <= 0) {
         return currentCart;
       }
 
-      return currentCart.map((item) =>
-        item.id === product.id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      );
-    }
-
-    if (product.stock <= 0) {
-      return currentCart;
-    }
-
-    return [...currentCart, { ...product, quantity: 1 }];
-  });
-}
-
-
-  function removeFromCart(productId) {
-    const updateCart = cart.filter(
-      (item) => item.id !== productId
-    );
-    setCart(updateCart);
+      return [...currentCart, { ...product, quantity: 1 }];
+    });
   }
 
-  const visibleProducts = filterProducts (
+  // Eliminar un producto del carrito.
+  function removeFromCart(productId) {
+    setCart((currentCart) =>
+      currentCart.filter((item) => item.id !== productId)
+    );
+  }
+
+  // Actualizar la cantidad de un producto.
+  function updateQuantity(productId, change) {
+    if (change !== 1 && change !== -1) {
+      return;
+    }
+
+    setCart((currentCart) =>
+      currentCart
+        .map((item) => {
+          if (item.id !== productId) {
+            return item;
+          }
+
+          const newQuantity = item.quantity + change;
+
+          if (newQuantity > item.stock) {
+            return item;
+          }
+
+          return {
+            ...item,
+            quantity: newQuantity,
+          };
+        })
+        .filter((item) => item.quantity > 0)
+    );
+  }
+
+  // Productos visibles según la búsqueda y categoría.
+  const visibleProducts = filterProducts(
     products,
     searchTerm,
-    category,
+    category
   );
-
-  function updateQuantity(productId, change) {
-  setCart((currentCart) =>
-    currentCart
-      .map((item) => {
-        if (item.id !== productId) {
-          return item;
-        }
-
-        const newQuantity = item.quantity + change;
-
-        if (newQuantity > item.stock) {
-          return item;
-        }
-
-        return { ...item, quantity: newQuantity };
-      })
-      .filter((item) => item.quantity > 0)
-  );
-}
 
   return (
-      <main className="store">
-      <header className="store-header">
-        <h1>UrbanWear Store</h1>
-        <p>Encuentra tu estilo urbano.</p>
-      </header>
+    <>
+      <Header cartCount={cartCount} />
 
-      <Cart
-        cart={cart}
-        onRemove={removeFromCart}
-        onUpdateQuantity={updateQuantity}
-      />
-      
-      <p>Productos en el carrito: {cart.length}</p>
-      <section className="catalog">
-        <div className="catalog-controls">
-          <input
-            type="search"
-            placeholder="Buscar productos..."
-            value={searchTerm}
-            onChange={(event) =>
-              setSearchTerm(event.target.value)
-            }
-            aria-label="Buscar productos"
-          />
-
-          <select
-            value={category}
-            onChange={(event) =>
-              setCategory(event.target.value)
-            }
-            aria-label="Filtrar por categoría"
-          >
-            <option value="all">Todas las categorías</option>
-            <option value="Camisetas">Camisetas</option>
-            <option value="Poleras">Poleras</option>
-            <option value="Pantalones">Pantalones</option>
-          </select>
-        </div>
-
-        <p>Productos encontrados: {visibleProducts.length}</p>
-
-        <ProductList 
-          products={visibleProducts}
-          onAddToCart={addToCart}  
+      <main className="store"  id="inicio">
+        <Cart
+          cart={cart}
+          onRemove={removeFromCart}
+          onUpdateQuantity={updateQuantity}
         />
 
-      </section>
-    </main>
+        <section className="catalog" id="catalogo">
+          <div className="catalog-controls">
+            <input
+              type="search"
+              placeholder="Buscar productos..."
+              value={searchTerm}
+              onChange={(event) =>
+                setSearchTerm(event.target.value)
+              }
+              aria-label="Buscar productos"
+            />
+
+            <select
+              value={category}
+              onChange={(event) =>
+                setCategory(event.target.value)
+              }
+              aria-label="Filtrar por categoría"
+            >
+              <option value="all">Todas las categorías</option>
+              <option value="Camisetas">Camisetas</option>
+              <option value="Poleras">Poleras</option>
+              <option value="Pantalones">Pantalones</option>
+            </select>
+          </div>
+
+          <p>
+            Productos encontrados: {visibleProducts.length}
+          </p>
+
+          <ProductList
+            products={visibleProducts}
+            onAddToCart={addToCart}
+          />
+        </section>
+      </main>
+    </>
   );
 }
 
-export default App
+export default App;

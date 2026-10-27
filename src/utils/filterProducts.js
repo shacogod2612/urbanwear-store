@@ -1,17 +1,23 @@
 
 export function filterProducts(products, searchTerm, category) {
-  const normalizedSearch = searchTerm.trim().toLowerCase();
+  const normalizedSearch = String(searchTerm ?? "")
+    .trim()
+    .toLowerCase();
 
-  const filteredProducts = products.filter((product) => {
+  return products.filter((product) => {
+    const name = String(product.name ?? "").toLowerCase();
+    const productCategory = String(
+      product.category ?? ""
+    ).toLowerCase();
+
     const matchesSearch =
-     product.name.toLowerCase().includes(normalizedSearch) ||
-     product.category.toLowerCase().includes(normalizedSearch);
+      name.includes(normalizedSearch) ||
+      productCategory.includes(normalizedSearch);
 
     const matchesCategory =
-      category === "all" || product.category === category;
+      category === "all" ||
+      product.category === category;
 
     return matchesSearch && matchesCategory;
   });
-
-  return filteredProducts;
 }
